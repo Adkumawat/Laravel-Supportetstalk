@@ -1,0 +1,441 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Api\UserWallet;
+use App\Models\Api\Wallet;
+use App\Models\Registration;
+use App\Models\Api\Withdrawal;
+use Illuminate\Support\Facades\Session;
+use DB;
+
+class UserWalletController extends Controller
+{
+    public function no_generated(Request $request){
+		$data = $request->validate([
+			'amount' => 'required',
+		]);
+		
+		$unique_no = random_int(100000, 999999);
+		
+		return response()->json([
+		       'status' => true,
+			   'message' => 'Unique number generated successfully',
+			   'data' => $unique_no,
+			]);
+	}
+	
+	public function store_wallet(Request $request){
+		
+		$data = $request->validate([
+		      'user_id' => 'required',
+		      'mobile_no' => 'required',
+		      'cr_amount' => 'required',
+		      'payment_id' => 'required',
+		      'order_id' => 'required',
+		      'signatre_id' => 'required',
+		]);
+		
+		$data['mode'] = 'recharge';
+		$data['type'] = 'user';
+		
+		$store = UserWallet::create($data);
+		
+		$check_wallet = Wallet::where('user_id', $request->user_id)->count();
+
+        if($check_wallet > 0){
+			$check_amount = Wallet::where('user_id', $request->user_id)->first();
+            $wallet_amount = $check_amount->wallet_amount+$request->cr_amount;	
+			
+			$wallet_data = Wallet::where('user_id', $request->user_id)->update([
+			'wallet_amount'=> $wallet_amount
+			]);
+		}else{
+			$wallet_data = Wallet::create([
+			      'user_id'=>$request->user_id,
+				  'wallet_amount'=> $request->cr_amount
+			]);
+		}		
+		
+		return response()->json([
+		       'status' => true,
+			   'message' => 'Transection detaills store successfully',
+			   'data' => $store,
+		]);
+	}
+	
+	public function show_wallet(Request $request, $user_id)
+	{
+	    $data = Wallet::where('user_id', $user_id)->get();
+		  if(!$data->isEmpty()){
+		
+		return response()->json([
+		       'status' => true,
+			   'message' => 'Data retrive successfull',
+			   'wallet_amount' => $data,
+			]);
+			 
+			 }else{
+				 
+			   return response()->json([
+		       'status' => false,
+			   'message' => 'Data not retrive',
+			   'wallet_amount' => 0,
+			]);
+			
+		  }
+	}
+	
+	public function charge(Request $request)
+	{
+		$data = $request->validate([
+		      'from_id' => 'required',
+		      'to_id' => 'required',
+              'duration' => 'required',     
+              'mode' => 'required',
+              'session_id'=>'required'
+		]);
+		
+		$charge = Registration::where('user_type', 'listner')->first();
+		//dd($charge);
+		$rate = $charge->charge;
+		
+		$deduct_amount = $rate*$request->duration;
+		
+		$listener_amount = $deduct_amount/2;
+		
+		//$data['dr_amount'] = $deduct_amount;
+		//$data['cr_amount'] = $listener_amount;
+		
+		$user_wallet1 = UserWallet::create([
+			      'user_id'=>$request->from_id,
+			      'mode'=> $request->mode,
+			      'type'=> 'user',
+			      'to_id'=> $request->to_id,
+				  'dr_amount'=> $deduct_amount,
+				  'duration' => $request->duration,
+				  'session_id'=>$request->session_id
+			]);
+			
+		//	print_r($user_wallet1);
+		$user_wallet2 = UserWallet::create([
+			      'user_id'=>$request->to_id,
+			      'mode'=> $request->mode,
+			      'type'=> 'listner',
+				  'to_id'=>$request->from_id,
+				  'cr_amount'=> $listener_amount,
+				  'duration' => $request->duration,
+				  'session_id'=>$request->session_id
+			]);
+		
+		$check_wallet = Wallet::where('user_id', $request->from_id)->count();
+
+        if($check_wallet > 0){
+			$check_amount = Wallet::where('user_id', $request->from_id)->first();
+            $wallet_amount = $check_amount->wallet_amount-$deduct_amount;
+			
+			
+			
+			$wallet_data = Wallet::where('user_id', $request->from_id)->update([
+			'wallet_amount'=> $wallet_amount
+			]);
+		}else{
+			$wallet_data = Wallet::create([
+			      'user_id'=>$request->from_id,
+				  'wallet_amount'=> 0.00
+			]);
+		}
+		
+		$check_wallet2 = Wallet::where('user_id', $request->to_id)->count();
+
+        if($check_wallet2 > 0){
+			$check_amount2 = Wallet::where('user_id', $request->to_id)->first();
+            $wallet_amount2 = $check_amount2->wallet_amount+$listener_amount;	
+			
+			$wallet_data2 = Wallet::where('user_id', $request->to_id)->update([
+			'wallet_amount'=> $wallet_amount2
+			]);
+		}else{
+			$wallet_data2 = Wallet::create([
+			      'user_id'=>$request->to_id,
+				  'wallet_amount'=> $listener_amount
+			]);
+		}
+		
+		$remaning_wallet = Wallet::where('user_id', $request->from_id)->first();
+		
+		return response()->json([
+		       'status' => true,
+			   'remaning_wallet' => $remaning_wallet
+			]);
+		
+	}
+	
+	public function show_transection(Request $request, $user_id)
+	{
+	
+	    $data = UserWallet::where('user_id', $user_id)->get();
+	    
+                 
+	    	 foreach($data as $transection){
+	    	     if($transection->type == 'user'){
+	    	        if(!empty($transection->user_id)){
+	    	        $user = Registration::where('id', $transection->user_id)->first();  
+	    	         if($user){
+	    	        $user_name = $user->name;
+	    	         }
+	     	     } else {
+    	    	         $user_name = '';
+    	    	     } 
+    	    	    if(!empty($transection->to_id)){
+	    	        $listener = Registration::where('id', $transection->to_id)->first();  
+	    	       if($listener){
+	    	        $listener_name = $listener->name;
+	    	       }
+    	    	     } else {
+    	    	         $listener_name = '';
+    	    	     }
+	    	     } elseif($transection->type == 'listner'){
+	    	        if(!empty($transection->user_id)){
+	    	        $listener = Registration::where('id', $transection->user_id)->first();    
+	    	        $listener_name = $listener->name;
+    	    	     } else {
+    	    	         $listener_name = '';
+    	    	     }
+    	    	    if(!empty($transection->to_id)){
+	    	        $user = Registration::where('id', $transection->to_id)->first();    
+	    	        $user_name = $user->name;
+    	    	     } else {
+    	    	         $user_name = '';
+    	    	     } 
+	    	     } 
+	    	    
+			 $id = $transection->id;
+			 $user_id = $transection->user_id;
+			 $type = $transection->type;
+			 $to_id = $transection->to_id;
+			 $mobile_no = $transection->mobile_no;
+			 $mode = $transection->mode;
+			 $duration = $transection->duration;
+			 $cr_amount = $transection->cr_amount;
+			 $dr_amount = $transection->dr_amount;
+			 $payment_id = $transection->payment_id;
+			 $order_id = $transection->order_id;
+			 $signatre_id = $transection->signatre_id;
+			 $created_at = $transection->created_at;
+			 $session_id = $transection->session_id;
+			 
+			 $time = date('Y-m-d H:i:s', strtotime($created_at));
+             
+			 // print_r($ago_time); die;
+			 
+           $transections[] = array(
+             'id' => $id,
+			 'user_id' => $user_id,
+			 'to_id' => $to_id,
+			 'user_name' => @$user_name,
+			 'listner_name' => @$listener_name,
+			 'type' => $type,
+			 'mobile_no' => $mobile_no,
+			 'mode' => $mode,
+			 'duration' => $duration,
+			 'cr_amount' => $cr_amount,
+			 'dr_amount' => $dr_amount,
+			 'payment_id' => $payment_id,
+			 'order_id' => $order_id,
+			 'signatre_id' => $signatre_id,
+			 'session_id' => $session_id,
+			 'created_at' => $time
+             );
+		}
+
+		$results = array();
+	 
+	    foreach($transections as $match){
+            $results[$match['session_id']][] = $match;
+        }
+
+        $trans = array();
+        foreach($results as $session => $values){
+            $duration = 0;
+            $cr_amount = 0.0;
+            $dr_amount = 0.0;
+            foreach($values as $value){
+                $duration += $value['duration'];
+                $cr_amount += $value['cr_amount'];
+                $dr_amount += $value['dr_amount'];
+            }
+            $values[0]['duration'] = $duration;
+            $values[0]['cr_amount'] = $cr_amount;
+            $values[0]['dr_amount'] = $dr_amount;
+            $trans[] = $values[0];
+         }
+            
+        
+        
+		  if(!$data->isEmpty()){
+		
+		return response()->json([
+		       'status' => true,
+			   'message' => 'Data retrive successfull',
+			   //'wallet_amount' => $data,
+			   'transections' => $trans
+			]);
+			 
+			 }else{
+				 
+			   return response()->json([
+		       'status' => false,
+			   'message' => 'Data not retrive'
+			]);
+			
+		  }
+	}
+	
+	public function withdrawal(Request $request){
+		$data = $request->validate([
+		      'user_id' => 'required',
+		      'amount' => 'required',
+		      'upi_id' => 'nullable',
+		      'account_no' => 'nullable',
+		      'ifsc_code' => 'nullable',
+		      'bank_name' => 'nullable'
+		]);
+		
+		$wallet_count = Wallet::where('user_id', $request->user_id)->count();
+		
+		if($wallet_count>0){
+		
+		$wallet_amount = Wallet::where('user_id', $request->user_id)->get();
+		 foreach($wallet_amount as $wa_amount){
+			 $amount = $wa_amount->wallet_amount;
+		 }
+		 
+		 $data['wallet_amount'] = $amount;
+		
+		if($request->amount > $amount){
+			return response()->json([
+		       'status' => true,
+			   'message' => "You don't have sufficient balance, your current wallet amount is ".$amount." "
+		]);
+		}else{
+			if(!$request->upi_id == ''){
+			
+			if($request->amount > 5000){
+				return response()->json([
+		       'status' => true,
+			   'message' => 'Maximum withdrawal amount is 5000',
+		]);
+			}elseif($request->amount < 200){
+				return response()->json([
+		       'status' => true,
+			   'message' => 'Minimum withdrawal amount is 200',
+		]);
+		}else{
+			$store = Withdrawal::create($data);
+		    return response()->json([
+		       'status' => true,
+			   'message' => 'withdrawal request send',
+			   'data' => $store,
+		]);
+		
+		} }else{
+		
+			if($request->amount > 25000){
+				return response()->json([
+		       'status' => true,
+			   'message' => 'Maximum withdrawal amount is 25000',
+		]);
+			}elseif($request->amount < 1000){
+				return response()->json([
+		       'status' => true,
+			   'message' => 'Minimum withdrawal amount is 1000',
+		]);
+		}
+        else{
+        	$store = Withdrawal::create($data);
+		    return response()->json([
+		       'status' => true,
+			   'message' => 'withdrawal request send',
+			   'data' => $store,
+		]);
+        }
+		
+		
+		
+		
+		}
+		}
+		}else{
+			  return response()->json([
+		       'status' => true,
+			   'message' => "You don't have wallet balance"
+		]);
+		  }
+		
+	}
+	
+	public function get_withdrawal($id)
+	{
+		$withdrawal_details = Withdrawal::where('user_id', $id)->get();
+		
+		 if(!$withdrawal_details->isEmpty()){
+		
+		return response()->json([
+		       'status' => true,
+			   'message' => 'Data retrive successfull',
+			   'withdrawal_details' => $withdrawal_details
+			]);
+			 
+			 }else{
+				 
+			   return response()->json([
+		       'status' => false,
+			   'message' => 'Data not retrive'
+			]);
+			
+		  }
+	}
+	
+	public function withdrawal_cancel($id)
+	{
+		$Withdrawal = Withdrawal::where('id', $id)->update([
+			'status'=> 2
+			]);
+			return redirect()->back()->with(Session::flash('error','Withdrawal Cancel'));
+	}
+	
+	public function withdrawal_success($id)
+	{
+		$Withdrawal = Withdrawal::find($id);
+    	$debit_amount=$Withdrawal->amount;
+	
+	
+	  $userdwallet=Wallet::where('user_id',$Withdrawal->user_id)->first();
+
+		$Withdrawal_less = Wallet::find($userdwallet->id);
+	
+      $total_amt=$Withdrawal_less->wallet_amount;
+	    $lessamount=($total_amt - $debit_amount);
+	    if($debit_amount<=$total_amt){
+	    	   
+		$Withdrawal_less->wallet_amount=$lessamount;
+		$Withdrawal_less->debit_amount=$debit_amount;
+	
+		$Withdrawal_less->update();
+		
+		$Withdrawal->status=0;
+		$Withdrawal->update();
+     	}
+     	else{
+     	   	return redirect()->back()->with(Session::flash('success','Withdrawal Cancle No Sufficent Amount in Your Wallet'));
+     	  }
+     
+
+	
+			return redirect()->back()->with(Session::flash('success','Withdrawal Done'));
+	}
+	
+}

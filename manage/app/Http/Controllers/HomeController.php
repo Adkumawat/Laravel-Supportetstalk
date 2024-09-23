@@ -35,8 +35,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-     
-  
+
+
     public function call_recording(){
         $files = Storage::disk('s3')->files('recordingnew');
         // DB::enableQueryLog();
@@ -62,7 +62,7 @@ class HomeController extends Controller
         }
         // dd(DB::getQueryLog());
     }
-        
+
   public function index()
   {
     // $this->call_recording();
@@ -92,13 +92,13 @@ class HomeController extends Controller
 
     $manual_recharge_today = UserWallet::select('cr_amount')->where('mode', 'manual')->where('created_at', '>', now()->subDays(1)->endOfDay())->sum('cr_amount');
     $recharge_today = UserWallet::select('cr_amount')->where('mode', 'recharge')->where('created_at', '>', now()->subDays(1)->endOfDay())->sum('cr_amount') + $manual_recharge_today;
-    
+
     $manual_recharge_yesterday = UserWallet::select('cr_amount')->where('mode', 'manual')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->sum('cr_amount');
     $recharge_yesterday = UserWallet::select('cr_amount')->where('mode', 'recharge')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->sum('cr_amount') + $manual_recharge_yesterday;
-    
+
     $manual_recharge_7days = UserWallet::select('cr_amount')->where('mode', 'manual')->where('created_at','>',  now()->subDays(7)->endOfDay())->sum('cr_amount');
     $recharge_7days = UserWallet::select('cr_amount')->where('mode', 'recharge')->where('created_at','>',  now()->subDays(7)->endOfDay())->sum('cr_amount') + $manual_recharge_7days;
-    
+
     $manual_recharge_this_month = UserWallet::select('cr_amount')->where('mode', 'manual')->whereMonth('created_at',Carbon::now()->month)->sum('cr_amount');
     $recharge_this_month = UserWallet::select('cr_amount')->where('mode', 'recharge')->whereMonth('created_at',Carbon::now()->month)->sum('cr_amount') + $manual_recharge_this_month;
 
@@ -109,74 +109,74 @@ class HomeController extends Controller
     $total_calls_yesterday = UserWallet::where('mode', '=', 'Call')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
     $total_chats_yesterday = UserWallet::where('mode', '=', 'Chat')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
     $total_vc_yesterday = UserWallet::where('mode', '=', 'Video')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
-    
+
     // $listener = Registration::select('cr_amount')->where('user_type', 'listner')->sum('cr_amount');
 
     $listener = Registration::where('user_type', 'listner')->count();
 
     $template['page'] = 'dashboard';
-    return view('admin.template ', $template, 
+    return view('admin.template ', $template,
     compact('user','users_today','users_7days','users_30days',
      'listener','user_count', 'listener_count',
       'recharge_today','recharge_yesterday','recharge_7days','recharge_this_month',
       'missed_chat_list','missed_call_list','recharge_today_list','busy_listeners',
-      'total_calls_today', 'total_chats_today', 'total_vc_today', 'total_vc_yesterday', 
+      'total_calls_today', 'total_chats_today', 'total_vc_today', 'total_vc_yesterday',
       'manual_recharge_this_month', 'total_calls_yesterday', 'total_chats_yesterday'
     ));
   }
-	
+
  	    public function admin()
-    { 
+    {
 	    $admin_count = User::count();
 		$admin = User::all();
-		
+
 		$template['page'] = 'admin-list';
 		return view('admin.template ', $template, compact('admin_count', 'admin'));
     }
-	
+
 	 public function add_admin()
-    { 
+    {
 		$template['page'] = 'add-admin';
 		return view('admin.template ', $template);
     }
-    
+
         public function edit_admin()
     {
 		$template['page'] = 'edit-admin';
 		return view('admin.template ', $template);
     }
-	
+
 	     public function reset_pass($id)
     {
 		$id = $id;
 		$template['page'] = 'rpass-admin';
 		return view('admin.template ', $template, compact('id'));
     }
-	
-	     
+
+
     public function view_user(Request $request)
     {
-      
+
         $users = Registration::with('Wallet')->orderBy('created_at', 'desc')->paginate(50);
 
-     
+
         $template['page'] = 'view-user';
         return view('admin.template', $template, compact('users'));
     }
 
-  
+
   	public function view_user2(Request $request)
       {
          // print_r($request->id);
          $mobile_no =$request->mobile_no;
-         
-   
-          
-          
-          
-   
-          
-     
+
+
+
+
+
+
+
+
 
 
           $user_data_6000_12000 = DB::table('registrations')
@@ -187,26 +187,26 @@ class HomeController extends Controller
             ->where('registrations.status', '=', '1')
             ->where('registrations.id', '>', '6000')
             ->orderBy('registrations.created_at', 'desc')->get();
-      
-      
+
+
            $users_list_last_7days = $user_data_6000_12000;
-          
-          
+
+
         //  ->where('created_at', '>', now()->subDays(30)->endOfDay());
-        
+
 
        // dd($user_count);
          //print_r($user_data); die;
 		$template['page'] = 'view-user2';
 		return view('admin.template ', $template, compact('user_data_6000_12000'));
     }
-	
+
 	public function user_wallet()
     {
 		$template['page'] = 'user-wallet';
 		return view('admin.template ', $template);
     }
-	
+
 	 public function user_transaction($id)
     {
 		$user_transections = DB::table('user_wallets')
@@ -216,49 +216,49 @@ class HomeController extends Controller
 		->where('user_wallets.type', '=', 'user')
 		->where('user_wallets.user_id', '=', $id)
 		->orderBy('user_wallets.created_at', 'desc')->get();
-		
+
 		//print_r($user_data); die;
 		$template['page'] = 'view-user-transaction';
 		return view('admin.template ', $template, compact('user_transections'));
     }
-    
-      
-    
+
+
+
     public function user_call($id)
     {
         //Recording Start
         $this->call_recording();
         //Recording End
-      
+
         $user_call_data = DB::table('calls')
         ->leftJoin('registrations', 'registrations.id', '=', 'calls.from_id')
-        
-          
+
+
         ->select('calls.*', 'registrations.name as username','registrations.mobile_no as mobile_number')
         ->where('calls.from_id',$id)
         ->orderBy('calls.created_at', 'desc')->get();
-       
+
          $user_call_count = DB::table('calls')
         ->leftJoin('registrations', 'registrations.id', '=', 'calls.from_id')
          ->where('calls.from_id',$id)
         ->select('calls.*', 'registrations.name as username','registrations.mobile_no as mobile_number')
-        
+
         ->orderBy('calls.created_at', 'desc')->count();
-       
+
 		$template['page'] = 'user-call';
 		return view('admin.template ', $template,compact('user_call_data','user_call_count'));
-		
+
     }
-    
+
         public function block_user()
     {
 		$user_data = DB::table('registrations')->leftJoin('wallets', 'registrations.id', '=', 'wallets.user_id')->select('registrations.*', 'wallets.wallet_amount')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '0')->orderBy('registrations.created_at', 'desc')->get();
         $user_count = DB::table('registrations')->leftJoin('wallets', 'registrations.id', '=', 'wallets.user_id')->select('registrations.*', 'wallets.wallet_amount')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '0')->orderBy('registrations.created_at', 'desc')->count();
-		
+
 		$template['page'] = 'user-block-account';
 		return view('admin.template ', $template, compact('user_data', 'user_count'));
     }
-    
+
    public function view_listener_kanti(Request $request)
     {
 
@@ -304,7 +304,7 @@ class HomeController extends Controller
 public function view_listener(Request $request)
 {
     $query = $request->input('search');
-    
+
     // Query to fetch listener data with wallet amount and online status
     $listner_data = DB::table('registrations')
         ->leftJoin('wallets', 'registrations.id', '=', 'wallets.user_id')
@@ -351,31 +351,31 @@ public function view_listener(Request $request)
     return view('admin.template', $template, compact('listner_data', 'listner_count'));
 }
 
-   
-  
-  
+
+
+
 	public function destroy($id)
     {
     $opportunity = Registration::findOrFail($id);
- 
+
        // $opportunity->delete_status = 1;
-      
-       
+
+
         $opportunity->delete();
-   
+
      return redirect()->back()->with(Session::flash('success',' Listener deleted Successfully'));
      }
 	  public function add_listener()
     {
 		$template['page'] = 'add-listener';
-		
+
 		return view('admin.template ', $template);
     }
-    
-    
-    
-        
-    
+
+
+
+
+
          public function listener_call($id)
     {
         //Recording Start
@@ -383,72 +383,72 @@ public function view_listener(Request $request)
         //Recording End
          $listner_call_data = DB::table('calls')
         ->leftJoin('registrations', 'registrations.id', '=', 'calls.to_id')
-        
+
         ->select('calls.*', 'registrations.name as listner_name','registrations.mobile_no as mobile_number')
         ->where('calls.to_id',$id)
         ->orderBy('calls.created_at', 'desc')->get();
-       
+
          $listner_call_count = DB::table('calls')
         ->leftJoin('registrations', 'registrations.id', '=', 'calls.to_id')
-        
+
         ->select('calls.*', 'registrations.name as listner_name','registrations.mobile_no as mobile_number')
          ->where('calls.to_id',$id)
         ->orderBy('calls.created_at', 'desc')->count();
 		$template['page'] = 'listener-call';
 		return view('admin.template ', $template, compact('listner_call_count','listner_call_data'));
     }
-	
+
 	public function listener_wallet()
     {
 		$template['page'] = 'listener-wallet';
 		return view('admin.template ', $template);
     }
-    
+
         public function listener_payout()
     {
 		$listener_payout = DB::table('withdrawals')->leftJoin('registrations', 'withdrawals.user_id', '=', 'registrations.id')->select('withdrawals.*', 'registrations.name', 'registrations.mobile_no')->where('registrations.user_type', '=', 'listner')->orderBy('withdrawals.created_at', 'desc')->get();
-		
+
 		$template['page'] = 'listener-payout';
 		return view('admin.template ', $template, compact('listener_payout'));
     }
-    
+
         public function listener_transaction($id)
     {
-		$listener_transections = DB::table('user_wallets')
+	    $listener_transections = DB::table('user_wallets')
 		->leftJoin('registrations', 'user_wallets.to_id', '=', 'registrations.id')
 		->leftJoin('wallets', 'user_wallets.user_id', '=', 'wallets.user_id')
 		->select('user_wallets.*', 'registrations.name','registrations.mobile_no','wallets.wallet_amount')
 		->where('user_wallets.type', '=', 'listner')
 		->where('user_wallets.user_id', '=', $id)
 		->orderBy('user_wallets.created_at', 'desc')->get();
-		
+
 		$template['page'] = 'listener-transaction';
 		return view('admin.template ', $template, compact('listener_transections'));
     }
-	
+
 	public function listener_charge()
     {
 		$charge = Registration::where('user_type', 'listner')->first();
-		
+
 		$template['page'] = 'listener-charge';
 		return view('admin.template ', $template, compact('charge'));
     }
-    
-	public function add_charge(Request $request) 
+
+	public function add_charge(Request $request)
 	{
 		$data = DB::table('registrations')->where('user_type', 'listner')->update(['charge'=>$request->charge]);
 	     return redirect()->back()->with(Session::flash('success','Charge Updated'));
 	}
-	
+
         public function block_listener()
     {
 		$listner_block = Registration::where('user_type', 'listner')->where('status', '0')->get();
 		$listner_count = Registration::where('user_type', 'listner')->where('status', '0')->count();
-		
+
 		$template['page'] = 'listener-block-account';
 		return view('admin.template ', $template, compact('listner_block', 'listner_count'));
     }
-    
+
      public function search_transaction()
     {
         // $transactions = UserWallet::orderBy('created_at', 'desc')->paginate(50);
@@ -469,7 +469,7 @@ public function view_listener(Request $request)
     $template['page'] = 'search-transaction';
     return view('admin.template', $template, compact('transactions'));
 }
-	
+
 		public function search_chat()
     {
         // Fetch transactions in descending order based on created_at timestamp
@@ -479,7 +479,7 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-	
+
 		public function search_recharge()
      {
         // Fetch transactions in descending order based on created_at timestamp
@@ -489,7 +489,7 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-	
+
 		public function search_withdrawal()
     {
         // Fetch transactions in descending order based on created_at timestamp
@@ -501,7 +501,7 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-  
+
     	public function search_reel()
     {
         // Fetch transactions in descending order based on created_at timestamp
@@ -522,7 +522,7 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-  
+
    public function search_penalty()
     {
         // Fetch transactions in descending order based on created_at timestamp
@@ -532,13 +532,13 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-	
+
 	public function send_notification()
     {
-        
+
         // $user_data = DB::table('registrations')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get();
         // $listeners = DB::table('registrations')->where('registrations.user_type', '=', 'listner')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get();
-      
+
         $template['page'] = 'send-notification';
 		return view('admin.template ', $template);
     }
@@ -614,19 +614,19 @@ public function view_listener(Request $request)
         $template['page'] = 'search-transaction';
         return view('admin.template', $template, compact('transactions'));
     }
-    
+
     public function fcm_push_notification($regId, $title,$body,$imagepath){
         // print_r($regId);
         // echo $title;
         // echo $body;
         // echo $imagepath;
-     
+
 // 		 print_r($regId);
         // die();
         //Send Push Notification
-        
-        $arrNotification= array();          
-        $arrNotification["title"] = $title;                           
+
+        $arrNotification= array();
+        $arrNotification["title"] = $title;
         $arrNotification["body"] = $body;
         $arrNotification["image"] = $imagepath;
         $arrNotification["default_sound"] = true;
@@ -638,7 +638,7 @@ public function view_listener(Request $request)
             // 'registration_ids' => array('f2mq13T0TGeOvm_0ojBe_c:APA91bH1XXPqpFJgiSe_os87mhJMka57W_Dtl8T06oyOk3uhPaCPBvBVej9kRtDfZWmE6x2ct_ubNEBuwriXXDuFSAmkswnkmCLmszchXzMTcPMjyi7TFurjwKN_WVENOY8EkazT6C06'),
             'notification' => $arrNotification
         );
-          
+
         // Firebase API Key
         $headers = array('Authorization:key=AAAAsl7lYN0:APA91bEBMLw5Pdps-iv5j0zCb6O9m-9-DiJUjylvAwX4lO6FjXZAviKYdu2F6q1hLkd-ek9cridGs5mqkRlPDZT4jXH5L-gh1NjkEReQULbYF-fLWRBrcblNvieYSzxSiUWuUb7aaz5W','Content-Type:application/json');
          // Open connection
@@ -658,14 +658,14 @@ public function view_listener(Request $request)
           curl_close($ch);
 //           return $result;
     }
-    
+
     public function submit_notification(Request $request)
     {
 
         Log::info($request);
-        
+
         $regId = array();
-		
+
         $data = $request->validate([
             'users'=>'required',
             'selected_users'=>'nullable',
@@ -675,11 +675,11 @@ public function view_listener(Request $request)
 			'image' => 'nullable',
 			'url' => 'nullable',
 		]);
-		
+
 		$url1 =  url('/');
 		if($request->file('image')){
            $file = $request->file('image');
-          
+
 			if($file)
 			{
 			 $filename = $file->getClientOriginalName();
@@ -694,10 +694,10 @@ public function view_listener(Request $request)
         } else {
             $imagepath = $url1.'/images/logo-small.png';
         }
-		
+
 		$title = $request->title;
 		$body = $request->msg;
-		
+
 		if($request->users == "1"){
 		    $user_data = DB::table('registrations')->select('device_token')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get()->toArray();
 		    foreach($user_data as $data){
@@ -721,7 +721,7 @@ public function view_listener(Request $request)
 		         $regId[] = $listener_data->device_token;
 		    }
 		}
-		
+
 		foreach(array_chunk($regId, 1000) as $x){
                 // array_chunk() will divide $arr_a into smaller array as [[1, 2, 3..., 500],[501, 502, .... , 1000] and so one till 5000]
                 $this->fcm_push_notification($x,$title,$body,$imagepath);
@@ -729,16 +729,16 @@ public function view_listener(Request $request)
         // die();
 	   return redirect()->route('send-notification')->with(Session::flash('success','Notification sent successfully'));
     }
-	
+
 	 public function offence_report(Request $request)
     {
 	    $mobile_no =$request->mobile_no;
-	    
+
 		$report = DB::table('reports')
 		->leftJoin('registrations', 'reports.from_id', '=', 'registrations.id')
 		->select('reports.*', 'registrations.name','registrations.mobile_no')
 		->where('mobile_no', 'like', '%'.$mobile_no.'%')
-		->orderBy('reports.created_at', 'desc')->get(); 
+		->orderBy('reports.created_at', 'desc')->get();
 
 		$template['page'] = 'offence-reported';
 		return view('admin.template ', $template, compact('report'));
@@ -748,68 +748,68 @@ public function view_listener(Request $request)
         $chats = DB::table('chats')
 		->leftJoin('registrations', 'chats.listner', '=', 'registrations.id')
 		->select('chats.*', 'registrations.name as listner_name','registrations.mobile_no as mobile_number')
-	
+
 		->where('chats.user',$id)
-		->orderBy('chats.created_at', 'desc')->get(); 
+		->orderBy('chats.created_at', 'desc')->get();
           $documents  = $chats;
-          
+
         $jsonData = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom'), true);
         //?pageToken=AFTOeJy7rX0cUQPrJt56o48HdO05tbQGkHm7NYRivH3GEHYhXGPb1kWgeW8ECSdbBj9C8_2e3afGuJUcGKcs149VK3-FxL5rqVFbtfPRIEZPz85RWl7506niBmwPKZvaOo-_
-        
+
        // $documents = $jsonData['documents'];
-        
-        
-    
+
+
+
         $template['page'] = 'user-chat';
 		return view('admin.template ', $template, compact('documents'));
     }
-    
+
      public function listener_chat($id)
     {
         $chats = DB::table('chats')
 		->leftJoin('registrations', 'chats.user', '=', 'registrations.id')
 		->select('chats.*', 'registrations.name as user_name','registrations.mobile_no as mobile_number')
-	
+
 		->where('chats.listner',$id)
-		->orderBy('chats.created_at', 'desc')->get(); 
+		->orderBy('chats.created_at', 'desc')->get();
           $documents  = $chats;
-     
-          
+
+
          $jsonData = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom'), true);
         //?pageToken=AFTOeJy7rX0cUQPrJt56o48HdO05tbQGkHm7NYRivH3GEHYhXGPb1kWgeW8ECSdbBj9C8_2e3afGuJUcGKcs149VK3-FxL5rqVFbtfPRIEZPz85RWl7506niBmwPKZvaOo-_
-        
+
        // $documents = $jsonData['documents'];
-        
+
 		$template['page'] = 'listener-chat';
 		return view('admin.template ', $template ,compact('documents'));
     }
     public function view_chat($data)
     {
-      
+
         $jsonDatainfo = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom/'.$data), true);
         $jsonData = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom/'.$data.'/chats'), true);
         $datas = $jsonData['documents'];
-       
+
         $datasdetails = $jsonDatainfo['fields'];
-        
-   
+
+
         $template['page'] = 'view-chat';
 		return view('admin.template ', $template, compact('datas','datasdetails'));
     }
   public function view_chat_listener($data)
     {
-      
+
         $jsonDatainfo = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom/'.$data), true);
         $jsonData = json_decode(file_get_contents('https://firestore.googleapis.com/v1/projects/support-stress-free/databases/(default)/documents/chatroom/'.$data.'/chats'), true);
         $datas = $jsonData['documents'];
-       
+
         $datasdetails = $jsonDatainfo['fields'];
-        
-   
+
+
         $template['page'] = 'view-chat';
 		return view('admin.template ', $template, compact('datas','datasdetails'));
     }
-    
+
   	public function edit_listener($id)
     {
         echo "test";
@@ -817,29 +817,29 @@ public function view_listener(Request $request)
         dd($id);
         $edit_listeners = Registration::findOrFail($id);
         dd($edit_listeners);
- 
+
         $opportunity->delete_status = 1;
-       
+
         $opportunity->update();
-   
+
      return redirect()->back()->with(Session::flash('success',' Listener deleted Successfully'));
      }
-   
+
 
     //Messages by Demon
     public function send_message()
     {
-        
+
         $user_data = DB::table('registrations')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get();
         $listeners = DB::table('registrations')->where('registrations.user_type', '=', 'listner')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get();
-      
+
         $template['page'] = 'send-message';
 		return view('admin.template ', $template, compact('user_data','listeners'));
     }
-    
+
     public function submit_message(Request $request){
         $regId = array();
-		
+
         $data = $request->validate([
             'users'=>'required',
             'selected_users'=>'nullable',
@@ -850,16 +850,16 @@ public function view_listener(Request $request)
 			'image' => 'nullable',
 			'url' => 'nullable',
 		]);
-		
+
 		$url1 =  url('/');
 // 		print_r($request->file('image'));
         if(!$request->link){
             $request->link = '';
         }
-		
+
 		if($request->file('image')){
            $file = $request->file('image');
-          
+
 			if($file)
 			{
 			 $filename = $file->getClientOriginalName();
@@ -874,7 +874,7 @@ public function view_listener(Request $request)
         } else {
             $imagepath = $url1.'/images/logo-small.png';
         }
-		
+
 		if($request->users == "1"){
 		    $user_data = DB::table('registrations')->select('id')->where('registrations.user_type', '=', 'user')->where('registrations.status', '=', '1')->where('registrations.device_token','!=','')->orderBy('registrations.created_at', 'desc')->get()->toArray();
 		    foreach($user_data as $data) {
@@ -899,7 +899,7 @@ public function view_listener(Request $request)
 		         $regId[] = $listener_data->id;
 		    }
 		}
-	
+
 		$messages['title'] = $request->title;
 		$messages['link'] = $request->link;
 		$messages['message'] = $request->msg;
@@ -912,6 +912,6 @@ public function view_listener(Request $request)
         }
 	   return redirect()->route('send-message')->with(Session::flash('success','Message sent successfully'));
     }
-        
-  
+
+
 }

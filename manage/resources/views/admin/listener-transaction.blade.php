@@ -33,7 +33,7 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                            </li>                                           
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>-->
@@ -42,7 +42,7 @@
                     </div><!-- .nk-block-head -->
                     <div class="nk-block">
                         <div class="nk-tb-list is-separate is-medium mb-3">
-                            <div class="nk-tb-item nk-tb-head">                               
+                            <div class="nk-tb-item nk-tb-head">
                                 <div class="nk-tb-col"><span>Trn ID</span></div>
                                 <div class="nk-tb-col tb-col-md"><span>Date/Time</span></div>
                                 <div class="nk-tb-col"><span class="d-none d-sm-block">Transaction Type</span></div>
@@ -50,18 +50,18 @@
                                 <!--<div class="nk-tb-col tb-col-sm"><span>Time Duration</span></div>-->
                                 <div class="nk-tb-col tb-col-md"><span>Amount</span></div>
                                 <div class="nk-tb-col"><span>Credit/Debit</span></div>
-                                <div class="nk-tb-col"><span>Duration</span></div>                                
+                                <div class="nk-tb-col"><span>Duration</span></div>
                             </div>
                                 <!-- .nk-tb-item -->
 								<?php $i=1; foreach($listener_transections as $data){ ?>
-                            <div class="nk-tb-item">                                
+                            <div class="nk-tb-item">
                                 <div class="nk-tb-col">
                                     <span class="tb-lead"><a href="#"><?php echo $data->payment_id ?? '--'; ?></a></span>
                                 </div>
                                 <div class="nk-tb-col tb-col-md">
                                     <span class="tb-lead"><?php echo $data->created_at; ?></span>
                                 </div>
-                                <div class="nk-tb-col">                                    
+                                <div class="nk-tb-col">
                                     <?php if($data->mode == 'chat'){ ?>
 										<span class="badge badge-sm has-bg bg-purple d-none d-sm-inline-flex"><em class="icon ni ni-msg"></em>&nbsp;<?php echo $data->mode; ?></span>
 										<?php }elseif($data->mode == 'call'){?>
@@ -72,7 +72,7 @@
 										<span class="badge badge-sm has-bg bg-danger d-none d-sm-inline-flex"><em class="icon ni ni-money"></em>&nbsp;<?php echo $data->mode; ?></span>
 								        <?php }?>
                                 </div>
-                                <div class="nk-tb-col"> 
+                                <div class="nk-tb-col">
                                     <div class="user-info">
                                         <span class="tb-lead"><?php echo $data->name ?? '--'; ?><span class="dot dot-success d-md-none ms-1"></span></span>
                                         <span><?php echo $data->mobile_no; ?></span>
@@ -97,11 +97,11 @@
                                 </div>
                                 <div class="nk-tb-col">
                                     <span class="tb-lead"><?php echo $data->duration ." "; ?> &nbsp; Minutes</span>
-                                </div>                                
+                                </div>
                             </div>
                             <!-- .nk-tb-item -->
                             <?php  $i++; } ?>
-                        
+
 
                         </div><!-- .nk-tb-list -->
                         <div class="card hide">

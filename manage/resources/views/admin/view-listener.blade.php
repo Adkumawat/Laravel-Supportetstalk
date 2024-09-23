@@ -38,12 +38,17 @@
                                     <ul class="nk-block-tools g-3">
                                         <li class="nk-block-tools-opt">
                                             <form method="GET" action="{{ route('view-listener') }}">
-                                                <div class="form-control-wrap">
-                                                    <input type="text" name="search" class="form-control" placeholder="Search by ID, Name, Mobile" style="width: 200px">
+                                                <div class="form-control-wrap"  style="width: 200px;">
+                                                    <input type="text" name="search" class="form-control"
+                                                        placeholder="Search by ID, Name, or Mobile"
+                                                        value="{{ request()->input('search') }}">
                                                 </div>
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                            </form>
                                         </li>
+                                        <li class="nk-block-tools-opt">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </li>
+                                        </form>
+
                                         <li class="nk-block-tools-opt">
                                             <div class="dropdown">
                                                 <a href="{{ url('add-listener') }}" class="dropdown-toggle btn btn-icon btn-primary" style="width: 140px;">
@@ -101,8 +106,8 @@
                                                 <button class="btn btn-success toggle-status" data-id="{{ $data->id }}" data-status="1">Online</button>
                                             @else
                                                 <button class="btn btn-danger toggle-status" data-id="{{ $data->id }}" data-status="-1">Offline</button>
-                                            @endif   
-                                            
+                                            @endif
+
 
                                             {{-- @if ($data->busy_status == 0)
                                                 <button class="btn btn-warning toggle-status" data-id="{{ $data->id }}" data-status="0">Busy</button>

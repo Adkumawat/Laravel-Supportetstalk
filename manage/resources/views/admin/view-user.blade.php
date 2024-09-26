@@ -33,10 +33,10 @@
                                      <ul class="nk-block-tools g-3">
                                          <li class="nk-block-tools-opt">
                                              <form method="GET" action="{{ route('view-user') }}">
-                                                 <div class="form-control-wrap"  style="width: 200px;">
+                                                 <div class="form-control-wrap"  style="width: 250px;">
                                                      <input type="text" name="search" class="form-control"
                                                          placeholder="Search by ID, Name, or Mobile"
-                                                         value="{{ request()->input('search') }}">
+                                                         value="{{ request()->input('search') }}" >
                                                  </div>
                                          </li>
                                          <li class="nk-block-tools-opt">
@@ -45,10 +45,10 @@
                                          </form>
                                          <li class="nk-block-tools-opt">
                                              <div class="drodown">
-                                                 <a href="{{ url('add-user') }}"
+                                                 {{-- <a href="{{ url('add-user') }}"
                                                      class="dropdown-toggle btn btn-icon btn-primary"
                                                      style="width:140px;"><em class="icon ni ni-plus"></em><span>Add
-                                                         User</span></a>
+                                                         User</span></a> --}}
                                              </div>
                                          </li>
                                      </ul>
@@ -145,7 +145,7 @@
                                                                                  class="icon ni ni-repeat"></em><span>Transaction</span></a>
                                                                      </li>
                                                                      <li class="divider"></li>
-                                                                     @if (Auth::user()->role == 1)
+                                                                     {{-- @if (Auth::user()->role == 'admin') --}}
                                                                          <li><a
                                                                                  href="{{ url('user-call/' . $user->id) }}"><em
                                                                                      class="icon ni ni-mobile"></em><span>Call
@@ -156,13 +156,13 @@
                                                                                      History</span></a></li>
                                                                          <li><a
                                                                                  href="{{ url('wallet-edit/' . $user->id) }}"><em
-                                                                                     class="icon ni ni-sign-inr-alt"></em><span>Update
+                                                                                     class="icon ni ni-wallet"></em><span>Update
                                                                                      Wallet</span></a></li>
                                                                          <li><a
                                                                                  href="{{ url('user-edit/' . $user->id) }}"><em
                                                                                      class="icon ni ni-mobile"></em><span>Edit
                                                                                      User</span></a></li>
-                                                                     @endif
+                                                                     {{-- @endif --}}
                                                                      <li class="divider"></li>
                                                                      <li><a href="{{ url('user-block/' . $user->id) }}"><em
                                                                                  class="icon ni ni-na"></em><span>Block

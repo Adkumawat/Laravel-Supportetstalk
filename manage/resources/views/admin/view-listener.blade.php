@@ -38,7 +38,7 @@
                                     <ul class="nk-block-tools g-3">
                                         <li class="nk-block-tools-opt">
                                             <form method="GET" action="{{ route('view-listener') }}">
-                                                <div class="form-control-wrap"  style="width: 200px;">
+                                                <div class="form-control-wrap"  style="width: 250px;">
                                                     <input type="text" name="search" class="form-control"
                                                         placeholder="Search by ID, Name, or Mobile"
                                                         value="{{ request()->input('search') }}">
@@ -157,7 +157,7 @@
                                                                     </li>
                                                                     <li>
                                                                         <a href="{{ url('add-wallet/' . $data->id) }}">
-                                                                            <em class="icon ni ni-trash"></em><span>Wallet</span></a>
+                                                                            <em class="icon ni ni-wallet"></em><span>Wallet</span></a>
                                                                     </li>
                                                                     <li>
 

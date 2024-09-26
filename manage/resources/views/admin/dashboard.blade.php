@@ -1,3 +1,5 @@
+
+
             <!-- content @s -->
             <div class="nk-content ">
                 <div class="container-fluid">
@@ -34,7 +36,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{$users->count()}}</div>
+                                                            <div class="amount">{{$users}}</div>
 
                                                         </div>
                                                     </div>
@@ -54,7 +56,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{ $users->where('created_at','>', now()->subDays(1)->endOfDay())->count() }}</div>
+                                                            <div class="amount">{{ $users_today }}</div>
 
                                                         </div>
                                                     </div>
@@ -74,7 +76,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{ $users->where('created_at','>', now()->subDays(7)->endOfDay())->count() }}</div>
+                                                            <div class="amount">{{ $users_7days }}</div>
 
                                                         </div>
                                                     </div>
@@ -94,7 +96,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{  $users->where('created_at','>', now()->subDays(30)->endOfDay())->count()  }}</div>
+                                                            <div class="amount">{{  $users_30days  }}</div>
 
                                                         </div>
                                                     </div>
@@ -118,7 +120,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{$listener->count()}}</div>
+                                                            <div class="amount">{{$listener}}</div>
 
                                                         </div>
                                                     </div>
@@ -138,7 +140,7 @@
                                                     </div>
                                                     <div class="data">
                                                         <div class="data-group">
-                                                            <div class="amount">{{$listener->where('created_at', \carbon\Carbon::now()->month)->count()}}</div>
+                                                            <div class="amount">{{$listener_count}}</div>
 
                                                         </div>
                                                     </div>
@@ -397,7 +399,7 @@
 
                                     </div>
 
-                                    <div class="col-md-6 col-lg-6">
+                                    <div class="col-md-3 col-lg-3">
                                         <div class="card card-full">
                                             <div class="card-inner-group">
                                                 <div class="card-inner">

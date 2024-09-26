@@ -1,5 +1,5 @@
  <!-- content @s -->
- ggghg
+ 
     <div class="nk-content ">
         <div class="container-fluid">
             <div class="nk-content-inner">
@@ -26,33 +26,33 @@
                             <div class="card-inner-group">
                                 <div class="card-inner ">
                                     <div class="nk-tb-list nk-tb-ulist">
-                                        <div class="nk-tb-item nk-tb-head">                                          
+                                        <div class="nk-tb-item nk-tb-head">
                                             <div class="nk-tb-col"><span class="sub-text">SL. No</span></div>
                                             <div class="nk-tb-col tb-col-mb"><span class="sub-text">Listener name</span></div>
                                             <div class="nk-tb-col tb-col-mb"><span class="sub-text">User name</span></div>
                                                <div class="nk-tb-col tb-col-mb"><span class="sub-text">Date/Time</span></div>
-                                            <div class="nk-tb-col tb-col-lg"><span class="sub-text">Call Recording</span></div>                                         
+                                            <div class="nk-tb-col tb-col-lg"><span class="sub-text">Call Recording</span></div>
                                         </div><!-- .nk-tb-item -->
-                                        <?php 
+                                        <?php
                                          use App\Models\Registration;
                                           $i=1;
-                                         foreach($listner_call_data as $datas){ 
+                                         foreach($listner_call_data as $datas){
                                          $users=Registration::where('id',$datas->from_id)->first();
-                                        
+
                                          ?>
                                         <div class="nk-tb-item">
-                                           
+
                                             <div class="nk-tb-col">
-                                                
+
                                                 <span class="tb-amount"><?php echo $i; ?></span>
                                             </div>
-                                            <div class="nk-tb-col">                                               
-                                                <div class="user-card">                                                       
+                                            <div class="nk-tb-col">
+                                                <div class="user-card">
                                                     <div class="user-info">
                                                         <span class="tb-lead"><?php echo $datas->listner_name; ?></span>
                                                         <span><?php echo $datas->mobile_number; ?></span>
                                                     </div>
-                                                </div>                                               
+                                                </div>
                                             </div>
                                             <div class="nk-tb-col">
                                                 <span class="tb-lead"><?php echo $users->name; ?></span>
@@ -62,13 +62,13 @@
                                             <div class="nk-tb-col tb-col-mb">
                                                 <span class="tb-lead"><?php  echo date('Y-m-d H:i:a', strtotime($datas->created_at));?></span>
                                             </div>
-                                           
+
                                             <div class="nk-tb-col tb-col-md">
                                                 <a href="<?php echo $datas->recorded_url;?>" target="_blank" download><em class="icon ni ni-circle-fill text-danger"></em><span>Recording</span></a>
-                                            </div>   
-                                         
+                                            </div>
+
                                         </div><!-- .nk-tb-item -->
-                                       
+
                                     <?php   $i++; } ?>
 
 

@@ -150,7 +150,26 @@
                                                                 <li><a href="{{ url('listener-transaction/' . $data->id) }}">
                                                                     <em class="icon ni ni-repeat"></em><span>Transaction</span></a>
                                                                 </li>
-                                                                @if (Auth::user()->user_type == 'superadmin')
+                                                                    <li>
+
+                                                                        <a href="{{ url('edit-listener/' . $data->id) }}">
+                                                                            <em class="icon ni ni-pen"></em><span>View</span></a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="{{ url('add-wallet/' . $data->id) }}">
+                                                                            <em class="icon ni ni-trash"></em><span>Wallet</span></a>
+                                                                    </li>
+                                                                    <li>
+
+                                                                        <a href="{{ url('block-listener/' . $data->id) }}">
+                                                                            <em class="icon ni ni-na"></em><span>Block</span></a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="{{ url('delete-listener/' . $data->id) }}">
+                                                                            <em class="icon ni ni-trash"></em><span>Delete</span></a>
+                                                                    </li>
+
+                                                                @if (Auth::user()->user_type == 'superadmin' || Auth::user()->user_type == 'admin')
                                                                 <li class="divider"></li>
                                                                     <li>
                                                                         @if ($data->status == 0)
@@ -205,7 +224,7 @@
                         button.text('Online').removeClass('btn-warning btn-danger').addClass('btn-success');
                         button.data('status', 0);
                     } else {
-                        button.text('busy').removeClass('btn-success btn-danger').addClass('btn-danger');
+                        button.text('Offline').removeClass('btn-success btn-danger').addClass('btn-danger');
                         button.data('status', 1);
                     }
                 },

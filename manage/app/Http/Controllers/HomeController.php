@@ -65,7 +65,6 @@ class HomeController extends Controller
 
   public function index()
   {
-    // $this->call_recording();
     $missed_chat_list = ChatRequest::where('status','cancelled')
     ->where('created_at', '>', now()->subDays(1)->endOfDay())
 		->orderBy('created_at', 'desc')
@@ -81,14 +80,14 @@ class HomeController extends Controller
 		->skip(0)
 		->take(50)
 		->get();
-    $user = Registration::where('user_type', 'user')->count();
-    $users_today = Registration::where('user_type', 'user')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
-    $users_7days = Registration::where('user_type', 'user')->where('created_at', '>', now()->subDays(7)->endOfDay())->count();
-    $users_30days = Registration::where('user_type', 'user')->where('created_at', '>', now()->subDays(30)->endOfDay())->count();
+
+    $users = Registration::where('user_type', 'user')->get();
 
     $user_count = Registration::where('user_type', 'user')->whereMonth('created_at', Carbon::now()->month)->count();
 
     $listener_count = Registration::where('user_type', 'listner')->whereMonth('created_at', Carbon::now()->month)->count();
+
+
 
     $manual_recharge_today = UserWallet::select('cr_amount')->where('mode', 'manual')->where('created_at', '>', now()->subDays(1)->endOfDay())->sum('cr_amount');
     $recharge_today = UserWallet::select('cr_amount')->where('mode', 'recharge')->where('created_at', '>', now()->subDays(1)->endOfDay())->sum('cr_amount') + $manual_recharge_today;
@@ -102,27 +101,33 @@ class HomeController extends Controller
     $manual_recharge_this_month = UserWallet::select('cr_amount')->where('mode', 'manual')->whereMonth('created_at',Carbon::now()->month)->sum('cr_amount');
     $recharge_this_month = UserWallet::select('cr_amount')->where('mode', 'recharge')->whereMonth('created_at',Carbon::now()->month)->sum('cr_amount') + $manual_recharge_this_month;
 
-	$busy_listeners = Registration::where('user_type', 'listner')->where('busy_status', '=', 1)->count();
-    $total_calls_today = UserWallet::where('mode', '=', 'Call')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
-    $total_chats_today = UserWallet::where('mode', '=', 'Chat')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
-    $total_vc_today = UserWallet::where('mode', '=', 'Video')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
-    $total_calls_yesterday = UserWallet::where('mode', '=', 'Call')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
-    $total_chats_yesterday = UserWallet::where('mode', '=', 'Chat')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
-    $total_vc_yesterday = UserWallet::where('mode', '=', 'Video')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
+	$busy_listeners = Registration::where('user_type', 'listner')->where('busy_status', 1)->count();
+
+    $total_calls_today = UserWallet::where('mode','Call')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
+
+    $total_chats_today = UserWallet::where('mode','Chat')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
+
+    $total_vc_today = UserWallet::where('mode', 'Video')->where('created_at', '>', now()->subDays(1)->endOfDay())->count();
+
+    $total_calls_yesterday = UserWallet::where('mode', 'Call')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
+
+    $total_chats_yesterday = UserWallet::where('mode', 'Chat')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
+    $total_vc_yesterday = UserWallet::where('mode','Video')->where('created_at', '>', now()->subDays(2)->endOfDay())->where('created_at', '<', now()->subDays(1)->endOfDay())->count();
 
     // $listener = Registration::select('cr_amount')->where('user_type', 'listner')->sum('cr_amount');
 
-    $listener = Registration::where('user_type', 'listner')->count();
+    $listener = Registration::where('user_type', 'listner')->get();
 
+    //
     $template['page'] = 'dashboard';
+
     return view('admin.template ', $template,
-    compact('user','users_today','users_7days','users_30days',
-     'listener','user_count', 'listener_count',
-      'recharge_today','recharge_yesterday','recharge_7days','recharge_this_month',
-      'missed_chat_list','missed_call_list','recharge_today_list','busy_listeners',
-      'total_calls_today', 'total_chats_today', 'total_vc_today', 'total_vc_yesterday',
-      'manual_recharge_this_month', 'total_calls_yesterday', 'total_chats_yesterday'
-    ));
+    compact('users','listener','user_count','listener_count','recharge_today_list','recharge_yesterday','manual_recharge_yesterday',
+    'recharge_7days','manual_recharge_7days','recharge_this_month','manual_recharge_this_month',
+        'manual_recharge_today','recharge_today','missed_chat_list','missed_call_list','busy_listeners',
+        'total_calls_today', 'total_chats_today', 'total_vc_today', 'total_vc_yesterday',
+        'total_calls_yesterday', 'total_chats_yesterday'
+        ));
   }
 
  	    public function admin()
@@ -317,7 +322,7 @@ public function view_listener(Request $request)
         })
         ->where('registrations.delete_status', '0')
         ->whereIn('registrations.status', [0, 1]) // Check for both 0 and 1 statuses
-        ->get();
+        ->latest()->get();
 
     // Count of active listeners
     $listner_count = Registration::where('user_type', 'listner')
@@ -350,9 +355,6 @@ public function view_listener(Request $request)
     $template['page'] = 'view-listener';
     return view('admin.template', $template, compact('listner_data', 'listner_count'));
 }
-
-
-
 
 	public function destroy($id)
     {
@@ -414,7 +416,7 @@ public function view_listener(Request $request)
 
         public function listener_transaction($id)
     {
-	    $listener_transections = DB::table('user_wallets')
+		$listener_transections = DB::table('user_wallets')
 		->leftJoin('registrations', 'user_wallets.to_id', '=', 'registrations.id')
 		->leftJoin('wallets', 'user_wallets.user_id', '=', 'wallets.user_id')
 		->select('user_wallets.*', 'registrations.name','registrations.mobile_no','wallets.wallet_amount')
@@ -812,17 +814,15 @@ public function view_listener(Request $request)
 
   	public function edit_listener($id)
     {
-        echo "test";
-        exit();
-        dd($id);
-        $edit_listeners = Registration::findOrFail($id);
-        dd($edit_listeners);
 
-        $opportunity->delete_status = 1;
 
-        $opportunity->update();
+        $listeners = Registration::findOrFail($id);
 
-     return redirect()->back()->with(Session::flash('success',' Listener deleted Successfully'));
+
+        $template['page'] = 'edit-listener';
+
+		return view('admin.template ', $template ,compact('listeners'));
+
      }
 
 

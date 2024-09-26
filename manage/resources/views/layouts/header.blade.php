@@ -7,7 +7,7 @@
         <meta name="author" content="Softnio">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
-       
+
         <!-- Fav Icon  -->
         <link rel="shortcut icon" href="{{url('public/uploads/app-icon.jpg')}}">
         <!-- Page Title  -->
@@ -16,13 +16,13 @@
         <link rel="stylesheet" href="{{url('assets/css/dashlite.css?ver=3.0.0')}}">
 
     <link id="skin-default" rel="stylesheet" href="{{url('assets/css/theme.css?ver=3.0.0')}}">
-   
+
     <link rel="stylesheet" href="{{url('assets/css/dashlite.css?ver=3.0.0')}}">
     <link id="skin-default" rel="stylesheet" href="{{url('assets/css/theme.css?ver=3.0.0')}}">
 
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 	</head>
 
     <body class="nk-body bg-lighter npc-default has-sidebar ">
@@ -66,7 +66,7 @@
                                             <span class="nk-menu-icon"><em class="icon ni ni-user"></em></span>
                                             <span class="nk-menu-text">Admin Account</span>
                                         </a>
-                                       
+
                                     </li><!-- .nk-menu-item -->
                                     <li class="nk-menu-item has-sub">
                                         <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -78,8 +78,8 @@
                                                 <a href="{{url('view-user')}}" class="nk-menu-link"><span class="nk-menu-text">View Users (0 - 6000)</span></a>
                                             </li>
 
-                                        
-                                           
+
+
                                             <li class="nk-menu-item">
                                                 <a href="{{url('block-user')}}" class="nk-menu-link"><span class="nk-menu-text">Blocked Users</span></a>
                                             </li>
@@ -91,23 +91,23 @@
                                             <span class="nk-menu-text">Listener Account</span>
                                         </a>
                                         <ul class="nk-menu-sub">
-                                           
+
                                             <li class="nk-menu-item">
-                                                <a href="{{url('view-listener')}}" class="nk-menu-link"><span class="nk-menu-text">View Listener</span></a>
+                                                <a href="{{route('view-listener')}}" class="nk-menu-link"><span class="nk-menu-text">View Listener</span></a>
                                             </li>
-                                            
+
                                             <li class="nk-menu-item">
-                                                <a href="{{url('block-listener')}}" class="nk-menu-link"><span class="nk-menu-text">Blocked Listener</span></a>
+                                                <a href="{{route('block-listener')}}" class="nk-menu-link"><span class="nk-menu-text">Blocked Listener</span></a>
                                             </li>
                                             <hr>
 
                                             <li class="nk-menu-item">
-                                                <a href="{{url('listener-payout')}}" class="nk-menu-link"><span class="nk-menu-text">Payout Requests</span></a>
-                                            </li> 
-											
+                                                <a href="{{route('listener-payout')}}" class="nk-menu-link"><span class="nk-menu-text">Payout Requests</span></a>
+                                            </li>
+
 											<li class="nk-menu-item">
-                                                <a href="{{url('listener-charge')}}" class="nk-menu-link"><span class="nk-menu-text">Listner Charge</span></a>
-                                            </li> 
+                                                <a href="{{route('listener-charge')}}" class="nk-menu-link"><span class="nk-menu-text">Listner Charge</span></a>
+                                            </li>
                                         </ul><!-- .nk-menu-sub -->
                                     </li><!-- .nk-menu-item -->
                                     <li class="nk-menu-item has-sub">
@@ -117,32 +117,32 @@
                                         </a>
                                         <ul class="nk-menu-sub">
                                             <li class="nk-menu-item">
-                                                <a href="{{url('search-transaction')}}" class="nk-menu-link"><span class="nk-menu-text">Search All Transaction</span></a>
+                                                <a href="{{route('search-transaction')}}" class="nk-menu-link"><span class="nk-menu-text">Search All Transaction</span></a>
                                             </li>
 
                                         </ul><!-- .nk-menu-sub -->
                                     </li><!-- .nk-menu-item -->
-                                    
+
                                      <!--Send msg-->
                                     <li class="nk-menu-item has-sub">
-                                        <a href="{{url('send-message')}}" class="nk-menu-link">
+                                        <a href="{{route('send-message')}}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-send"></em></span>
                                             <span class="nk-menu-text">Send Message</span>
-                                        </a>                                    
+                                        </a>
                                     </li><!-- .nk-menu-item -->
 
                                     <li class="nk-menu-item has-sub">
                                         <a href="{{url('send-notification')}}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-bell-fill"></em></span>
                                             <span class="nk-menu-text">Send Notification</span>
-                                        </a>                                    
+                                        </a>
                                     </li><!-- .nk-menu-item -->
-                                    
+
                                     <li class="nk-menu-item has-sub">
                                         <a href="{{url('offence-report')}}" class="nk-menu-link text-danger">
                                             <span class="nk-menu-icon"><em class="icon ni ni-alert-circle text-danger"></em></span>
                                             <span class="nk-menu-text">Offence Reported</span>
-                                        </a>                                    
+                                        </a>
                                     </li><!-- .nk-menu-item -->
 
 
@@ -151,7 +151,7 @@
                             </div><!-- .nk-sidebar-menu -->
                         </div><!-- .nk-sidebar-content -->
                     </div><!-- .nk-sidebar-element -->
-                
+
                   </div>
             <!-- sidebar @e -->
             <!-- wrap @s -->
@@ -165,7 +165,7 @@
                             </div>
                             <div class="nk-header-brand d-xl-none">
                                 <a href="{{url('home')}}" class="logo-link">
-                                   
+
                                      <img class="logo-dark logo-img" src="{{('public/uploads/app-icon.jpg')}}" srcset="{{('public/uploads/app-icon.jpg 2x')}}" alt="logo-dark">
                             <img class="logo-dark logo-img" src="{{('public/uploads/app-icon.jpg')}}" srcset="{{('public/uploads/app-icon.jpg 2x')}}" alt="logo-dark">
                                 </a>
@@ -176,9 +176,9 @@
                             </div>--><!-- .nk-header-news -->
                             <div class="nk-header-tools">
                                 <ul class="nk-quick-nav">
-                                    
+
                                     <li class="dropdown chats-dropdown hide-mb-xs">
-                                       
+
                                         <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end">
                                             <div class="dropdown-head">
                                                 <span class="sub-title nk-dropdown-title">Recent Chats</span>
@@ -215,7 +215,7 @@
                                                             <div class="chat-info">
                                                                 <div class="chat-from">
                                                                     <div class="name">Mr.Bean</div>
-                                                                   
+
                                                                 </div>
                                                                 <div class="chat-context">
                                                                     <div class="text">Hi, I am Bean, can you help me with this problem ?</div>
@@ -310,7 +310,7 @@
                                         </div>
                                     </li>
                                     <li class="dropdown notification-dropdown">
-                                       
+
                                         <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end">
                                             <div class="dropdown-head">
                                                 <span class="sub-title nk-dropdown-title">Notifications</span>
@@ -386,7 +386,7 @@
                                                     <em class="icon ni ni-user-alt"></em>
                                                 </div>
                                                 <div class="user-info d-none d-xl-block">
-                                                  
+
                                                     <div class="user-name dropdown-indicator">{{ Auth::user()->name }}</div>
                                                 </div>
                                             </div>
@@ -405,7 +405,7 @@
                                             </div>
                                             <div class="dropdown-inner">
                                                 <ul class="link-list">
-                                                    <!--<li><a href="#"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>   -->                                           
+                                                    <!--<li><a href="#"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>   -->
                                                     <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
                                                 </ul>
                                             </div>

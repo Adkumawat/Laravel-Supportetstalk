@@ -48,6 +48,8 @@ Route::get('/block-user', [App\Http\Controllers\HomeController::class, 'block_us
 
 Route::get('/view-listener/', [App\Http\Controllers\HomeController::class, 'view_listener'])->name('view-listener');
 
+Route::get('/edit-listener/{id}', [App\Http\Controllers\HomeController::class, 'edit_listener'])->name('edit-listener');
+
 Route::get('delete/{id}', [App\Http\Controllers\HomeController::class, 'destroy'])->name('delete');
 
 
